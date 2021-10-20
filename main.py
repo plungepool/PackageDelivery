@@ -1,10 +1,22 @@
 # Main
+import csv
 import hash
 
-h = hash.HashMap()
-h.add('1', "195 W Oakland Ave Salt Lake City UT 84115")
-h.add('10', "600 E 900 South Salt Lake City UT 84105")
-h.add('11', "2600 Taylorsville Blvd Salt Lake City UT 84118")
-h.add('12', "3575 W Valley Central Station bus Loop West Valley City UT 84119")
-h.add('13', "2010 W 500 S Salt Lake City UT 84104")
-h.print()
+with open('WGUPS Package File.csv') as packageFile:
+    read_csv = csv.reader(packageFile, delimiter=',')
+    h = hash.HashMap()
+
+    for row in read_csv:
+        id = row[0]
+        address = row[1]
+        city = row[2]
+        state = row[3]
+        zip = row[4]
+        deliveryTime = row[5]
+        mass = row[6]
+        specialNotes = row[7]
+
+        value = [id, address, city, state, zip, deliveryTime, mass, specialNotes]
+        h.add(id, value)
+
+    print(h.get('3'))
