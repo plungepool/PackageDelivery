@@ -1,16 +1,10 @@
-# This is a sample Python script.
+# Main
+import hash
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+h = hash.HashMap()
+h.add('1', "195 W Oakland Ave Salt Lake City UT 84115")
+h.add('10', "600 E 900 South Salt Lake City UT 84105")
+h.add('11', "2600 Taylorsville Blvd Salt Lake City UT 84118")
+h.add('12', "3575 W Valley Central Station bus Loop West Valley City UT 84119")
+h.add('13', "2010 W 500 S Salt Lake City UT 84104")
+h.print()
