@@ -11,15 +11,16 @@ with open('WGUPS Package File.csv') as packageFile:
 
     for row in read_csv:
         id = row[0]
-        address = row[1]
-        city = row[2]
-        state = row[3]
-        zip = row[4]
-        deliveryTime = row[5]
-        mass = row[6]
-        specialNotes = row[7]
+        location = row[1]
+        address = row[2]
+        city = row[3]
+        state = row[4]
+        zip = row[5]
+        deliveryTime = row[6]
+        mass = row[7]
+        specialNotes = row[8]
 
-        value = [id, address, city, state, zip, deliveryTime, mass, specialNotes]
+        value = [id, location, address, city, state, zip, deliveryTime, mass, specialNotes]
         h.add(id, value)
 
 # Graph Delivery Table
@@ -53,18 +54,27 @@ with open('WGUPS Distance Table.csv') as distanceFile:
     for pair in adjacencyList:
         i = 0
         for distanceList in pair.values():
-            # print(distanceList)
             for distance in distanceList:
-                # print(distance)
                 g.add_undirected_edge(*pair.keys(), locationsList[i], distance)
                 i += 1
 
-    edges = g.get_edges()
-    print(edges.get(('Western Governors University', 'City Center of Rock Springs')))
-
 # Create 3 Truck objects
-    t = truck.Truck()
-    # print(t.get_distance_to_next_delivery(, )
+    t1 = truck.Truck()
+    # t1.departureTime.hour = 8
+    # t1.departureTime.minute = 0
+    t1.packageList = [1, 2, 12, 4, 13, 14, 15, 16, 19, 20, 29, 30, 31, 34, 37, 40]
+
+    t2 = truck.Truck()
+    # t2.departureTime.hour = 9
+    # t2.departureTime.minute = 5
+    t2.packageList = [3, 5, 6, 7, 10, 11, 17, 18, 25, 28, 32, 33, 35, 36, 38, 39]
+
+    t3 = truck.Truck()
+    # t3.departureTime.hour = 10
+    # t3.departureTime.minute = 20
+    t3.packageList = [8, 9, 21, 22, 23, 24, 26, 27]
+
+    print(t1.get_distance_to_next_delivery(g, t1.currentLocation, 'City Center of Rock Springs'))
 
 # Load packages into trucks
 
