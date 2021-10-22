@@ -2,6 +2,7 @@
 
 """Source: https://www.youtube.com/watch?v=9HFbhPscPU0"""
 
+
 class HashMap:
     def __init__(self):
         self.size = 10
