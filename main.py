@@ -1,5 +1,7 @@
 # Main
 import csv
+import datetime
+
 import hash
 import graph
 import truck
@@ -58,24 +60,94 @@ with open('WGUPS Distance Table.csv') as distanceFile:
                 g.add_undirected_edge(*pair.keys(), locationsList[i], distance)
                 i += 1
 
-# Create 3 Truck objects
+# Create/Load 3 Truck objects
     t1 = truck.Truck()
-    # t1.departureTime.hour = 8
-    # t1.departureTime.minute = 0
+    t1.departureTime = datetime.datetime.strptime('08:00:00', '%H:%M:%S').time()
     t1.packageList = [1, 2, 12, 4, 13, 14, 15, 16, 19, 20, 29, 30, 31, 34, 37, 40]
 
     t2 = truck.Truck()
-    # t2.departureTime.hour = 9
-    # t2.departureTime.minute = 5
+    t2.departureTime = datetime.datetime.strptime('09:05:00', '%H:%M:%S').time()
     t2.packageList = [3, 5, 6, 7, 10, 11, 17, 18, 25, 28, 32, 33, 35, 36, 38, 39]
 
     t3 = truck.Truck()
-    # t3.departureTime.hour = 10
-    # t3.departureTime.minute = 20
     t3.packageList = [8, 9, 21, 22, 23, 24, 26, 27]
 
-    print(t1.get_distance_to_next_delivery(g, t1.currentLocation, 'City Center of Rock Springs'))
-
-# Load packages into trucks
+# UI
+print("******WELCOME TO THE WGUPS PACKAGE TRACKING SYSTEM*****\n")
+print("PLEASE MAKE A SELECTION:\n")
+selection = input("1) RUN PACKAGE DELIVERY SIMULATION\n"
+                  "2) LOOKUP PACKAGE STATUS BY TIME\n")
 
 # Calculate distances and print
+if selection == '1':
+    print("NOW DELIVERING PACKAGES...")
+
+    # Truck 1
+    for delivery in t1.packageList:
+        # lookup delivery location by id
+        nextLocationName = h.get(str(delivery))[1]
+        # look up distance to travel, add to travelMileage
+        nextLocationDistance = float(t1.get_distance_to_next_delivery(g, t1.currentLocation, nextLocationName))
+        t1.travelMileage += nextLocationDistance
+        # calculate travel time in hours at 18mph, add to travelTime
+        t1.travelTime += nextLocationDistance / 18
+        # update current truck location
+        t1.currentLocation = nextLocationName
+    # return to hub
+    nextLocationName = 'Western Governors University'
+    nextLocationDistance = float(t1.get_distance_to_next_delivery(g, t1.currentLocation, nextLocationName))
+    t1.travelMileage += nextLocationDistance
+    t1.travelTime += nextLocationDistance / 18
+    t1.currentLocation = nextLocationName
+
+    # Truck 2
+    for delivery in t2.packageList:
+        nextLocationName = h.get(str(delivery))[1]
+        nextLocationDistance = float(t2.get_distance_to_next_delivery(g, t2.currentLocation, nextLocationName))
+        t2.travelMileage += nextLocationDistance
+        t2.travelTime += nextLocationDistance / 18
+        t2.currentLocation = nextLocationName
+    nextLocationName = 'Western Governors University'
+    nextLocationDistance = float(t2.get_distance_to_next_delivery(g, t2.currentLocation, nextLocationName))
+    t2.travelMileage += nextLocationDistance
+    t2.travelTime += nextLocationDistance / 18
+    t2.currentLocation = nextLocationName
+
+    # compare departure time + travel time of t1 and t2, then send truck that is finished
+    # first back to hub, then set t3 departure time to time of arrival at hub
+    t1_datetime = datetime.datetime.combine(datetime.date.today(), t1.departureTime)
+    t1CompletionDatetime = t1_datetime + datetime.timedelta(hours=t1.travelTime)
+
+    t2_datetime = datetime.datetime.combine(datetime.date.today(), t2.departureTime)
+    t2CompletionDatetime = t2_datetime + datetime.timedelta(hours=t2.travelTime)
+
+    if t1CompletionDatetime.time() < t2CompletionDatetime.time():
+        t3.departureTime = t1CompletionDatetime
+    else:
+        t3.departureTime = t2CompletionDatetime
+
+    # Truck 3
+    for delivery in t3.packageList:
+        nextLocationName = h.get(str(delivery))[1]
+        nextLocationDistance = float(t3.get_distance_to_next_delivery(g, t3.currentLocation, nextLocationName))
+        t3.travelMileage += nextLocationDistance
+        t3.travelTime += nextLocationDistance / 18
+        t3.currentLocation = nextLocationName
+    nextLocationName = 'Western Governors University'
+    nextLocationDistance = float(t3.get_distance_to_next_delivery(g, t3.currentLocation, nextLocationName))
+    t3.travelMileage += nextLocationDistance
+    t3.travelTime += nextLocationDistance / 18
+    t3.currentLocation = nextLocationName
+
+    print("TOTAL MILEAGE: " + str(t1.travelMileage + t2.travelMileage + t3.travelMileage)[0: 6] + " miles")
+    print("TOTAL DELIVERY TIME: " + str(t1.travelTime + t2.travelTime + t3.travelTime)[0: 5] + " hours")
+    print("THANK YOU FOR USING WGUPS - GOODBYE")
+
+# Track packages - TODO
+elif selection == '2':
+    pass
+    pkg_id = input("PLEASE ENTER PACKAGE ID:\n")
+    time = input("PLEASE ENTER TIME TO CHECK STATUS(HH:MM:SS):\n")
+
+else:
+    print("INVALID INPUT. TYPE 1 OR 2 TO MAKE SELECTION.")
