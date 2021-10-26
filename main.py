@@ -83,35 +83,10 @@ if selection == '1':
     print("NOW DELIVERING PACKAGES...")
 
     # Truck 1
-    for delivery in t1.packageList:
-        # lookup delivery location by id
-        nextLocationName = h.get(str(delivery))[1]
-        # look up distance to travel, add to travelMileage
-        nextLocationDistance = float(t1.get_distance_to_next_delivery(g, t1.currentLocation, nextLocationName))
-        t1.travelMileage += nextLocationDistance
-        # calculate travel time in hours at 18mph, add to travelTime
-        t1.travelTime += nextLocationDistance / 18
-        # update current truck location
-        t1.currentLocation = nextLocationName
-    # return to hub
-    nextLocationName = 'Western Governors University'
-    nextLocationDistance = float(t1.get_distance_to_next_delivery(g, t1.currentLocation, nextLocationName))
-    t1.travelMileage += nextLocationDistance
-    t1.travelTime += nextLocationDistance / 18
-    t1.currentLocation = nextLocationName
+    t1.deliver_to_nearest_neighbors(h, g)
 
     # Truck 2
-    for delivery in t2.packageList:
-        nextLocationName = h.get(str(delivery))[1]
-        nextLocationDistance = float(t2.get_distance_to_next_delivery(g, t2.currentLocation, nextLocationName))
-        t2.travelMileage += nextLocationDistance
-        t2.travelTime += nextLocationDistance / 18
-        t2.currentLocation = nextLocationName
-    nextLocationName = 'Western Governors University'
-    nextLocationDistance = float(t2.get_distance_to_next_delivery(g, t2.currentLocation, nextLocationName))
-    t2.travelMileage += nextLocationDistance
-    t2.travelTime += nextLocationDistance / 18
-    t2.currentLocation = nextLocationName
+    t2.deliver_to_nearest_neighbors(h, g)
 
     # compare departure time + travel time of t1 and t2, then send truck that is finished
     # first back to hub, then set t3 departure time to time of arrival at hub
@@ -127,17 +102,7 @@ if selection == '1':
         t3.departureTime = t2CompletionDatetime
 
     # Truck 3
-    for delivery in t3.packageList:
-        nextLocationName = h.get(str(delivery))[1]
-        nextLocationDistance = float(t3.get_distance_to_next_delivery(g, t3.currentLocation, nextLocationName))
-        t3.travelMileage += nextLocationDistance
-        t3.travelTime += nextLocationDistance / 18
-        t3.currentLocation = nextLocationName
-    nextLocationName = 'Western Governors University'
-    nextLocationDistance = float(t3.get_distance_to_next_delivery(g, t3.currentLocation, nextLocationName))
-    t3.travelMileage += nextLocationDistance
-    t3.travelTime += nextLocationDistance / 18
-    t3.currentLocation = nextLocationName
+    t3.deliver_to_nearest_neighbors(h, g)
 
     print("TOTAL MILEAGE: " + str(t1.travelMileage + t2.travelMileage + t3.travelMileage)[0: 6] + " miles")
     print("TOTAL DELIVERY TIME: " + str(t1.travelTime + t2.travelTime + t3.travelTime)[0: 5] + " hours")
@@ -148,6 +113,11 @@ elif selection == '2':
     pass
     pkg_id = input("PLEASE ENTER PACKAGE ID:\n")
     time = input("PLEASE ENTER TIME TO CHECK STATUS(HH:MM:SS):\n")
+    # find truck that package is in
+    # run simulation, logging delivery times for each package up until delivery time > query time
+    # if package delivered, print delivered at what time
+    # if not delivered, print en route
+    # if on any truck before its departure, print at hub
 
 else:
     print("INVALID INPUT. TYPE 1 OR 2 TO MAKE SELECTION.")
