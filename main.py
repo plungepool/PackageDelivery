@@ -11,6 +11,8 @@ with open('WGUPS Package File.csv') as packageFile:
     read_csv = csv.reader(packageFile, delimiter=',')
     h = hash.HashMap()
 
+    # Parse CSV data and insert into hashmap
+    # Time complexity of O(n) or worst-case O(n^2) [O(n) of for loop + nested hash add method]
     for row in read_csv:
         id = row[0]
         location = row[1]
@@ -29,8 +31,10 @@ with open('WGUPS Package File.csv') as packageFile:
 with open('WGUPS Distance Table.csv') as distanceFile:
     read_csv = csv.reader(distanceFile, delimiter=',')
     adjacencyList = []
-
     count = 0
+
+    # Parse CSV and create adjacency list
+    # Time complexity of O(n^2)
     for row in read_csv:
         distances = []
         i = 0
@@ -49,10 +53,14 @@ with open('WGUPS Distance Table.csv') as distanceFile:
 
     g = graph.Graph()
     locationsList = []
+    # Add adjacency list items as graph vertices
+    # Time complexity of O(n)
     for pair in adjacencyList:
         g.add_vertex(*pair.keys())
         locationsList.append(*pair.keys())
 
+    # Add undirected edges to graph
+    # Time complexity of O(n^3)
     for pair in adjacencyList:
         i = 0
         for distanceList in pair.values():
@@ -77,44 +85,47 @@ print("******WELCOME TO THE WGUPS PACKAGE TRACKING SYSTEM*****\n")
 print("PLEASE MAKE A SELECTION:\n")
 selection = input("1) RUN PACKAGE DELIVERY SIMULATION\n"
                   "2) LOOKUP PACKAGE STATUS BY TIME\n")
-
-# Calculate distances and print
 if selection == '1':
     print("NOW DELIVERING PACKAGES...")
 
+# Initialize log for delivery times
 arrivalLog = {}
 
-# Truck 1
+# Run deliveries for Truck 1
 t1.deliver_to_nearest_neighbors(h, g, arrivalLog)
 
-# Truck 2
+# Run deliveries for Truck 2
 t2.deliver_to_nearest_neighbors(h, g, arrivalLog)
 
-# compare departure time + travel time of t1 and t2, then send truck that is finished
-# first back to hub, then set t3 departure time to time of arrival at hub
+# Set Truck 3 departure time based on first truck to return to hub
 t1_datetime = datetime.datetime.combine(datetime.date.today(), t1.departureTime)
 t1CompletionDatetime = t1_datetime + datetime.timedelta(hours=t1.travelTime)
-
 t2_datetime = datetime.datetime.combine(datetime.date.today(), t2.departureTime)
 t2CompletionDatetime = t2_datetime + datetime.timedelta(hours=t2.travelTime)
-
 if t1CompletionDatetime.time() < t2CompletionDatetime.time():
     t3.departureTime = t1CompletionDatetime.time()
 else:
     t3.departureTime = t2CompletionDatetime.time()
 
-# Truck 3
+# Run deliveries for Truck 3
 t3.deliver_to_nearest_neighbors(h, g, arrivalLog)
 
+# Print stats for option 1
 if selection == '1':
     print("TOTAL MILEAGE: " + str(t1.travelMileage + t2.travelMileage + t3.travelMileage)[0: 6] + " miles")
     print("TOTAL DELIVERY TIME: " + str(t1.travelTime + t2.travelTime + t3.travelTime)[0: 5] + " hours")
     print("THANK YOU FOR USING WGUPS - GOODBYE")
 
-# Track packages
+# Print package tracking for option 2
 elif selection == '2':
     time = input("PLEASE ENTER TIME TO CHECK PACKAGE STATUS(HH:MM:SS):\n")
-    time = datetime.datetime.strptime(time, '%H:%M:%S').time()
+    try:
+        time = datetime.datetime.strptime(time, '%H:%M:%S').time()
+    except ValueError:
+        print("INVALID INPUT. PLEASE ENSURE TIME IS IN CORRECT FORMAT.")
+        quit()
+    # Determine status for each package
+    # Time complexity of O(n)
     for package in arrivalLog:
         if arrivalLog.get(package).time() <= time:
             print("#" + str(package) + " has been delivered at " + str(arrivalLog.get(package)))

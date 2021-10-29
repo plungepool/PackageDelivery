@@ -1,19 +1,24 @@
-# Hash Map
-
+# Hash Map class
 """Source: https://www.youtube.com/watch?v=9HFbhPscPU0"""
 
 
+# Class representing a hashmap and its related operations
 class HashMap:
+    # Initialize hashmap with fixed size
     def __init__(self):
         self.size = 10
         self.map = [None] * self.size
 
+    # Return hash value from key
+    # Time complexity of O(n)
     def _get_hash(self, key):
         hash = 0
         for char in str(key):
             hash += ord(char)
         return hash % self.size
 
+    # Add key-value pairs to hashmap
+    # Time complexity of O(1), worst case O(n)
     def add(self, key, value):
         key_hash = self._get_hash(key)
         key_value = [key, value]
@@ -29,6 +34,8 @@ class HashMap:
             self.map[key_hash].append(key_value)
             return True
 
+    # Retrieve value using key
+    # Time complexity of O(1), worst case O(n)
     def get(self, key):
         key_hash = self._get_hash(key)
         if self.map[key_hash] is not None:
@@ -36,19 +43,3 @@ class HashMap:
                 if pair[0] == key:
                     return pair[1]
         return None
-
-    def delete(self, key):
-        key_hash = self._get_hash(key)
-
-        if self.map[key_hash] is None:
-            return False
-        for i in range (0, len(self.map[key_hash])):
-            if self.map[key_hash][i][0] == key:
-                self.map[key_hash].pop(i)
-                return True
-
-    def print(self):
-        print('---PACKAGES---')
-        for item in self.map:
-            if item is not None:
-                print(str(item))
