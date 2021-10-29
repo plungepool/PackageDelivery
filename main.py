@@ -62,11 +62,11 @@ with open('WGUPS Distance Table.csv') as distanceFile:
 
 # Create/Load 3 Truck objects
     t1 = truck.Truck()
-    t1.departureTime = datetime.datetime.strptime('08:00:00', '%H:%M:%S').time()
+    t1.departureTime = datetime.time(8)
     t1.packageList = [1, 2, 12, 4, 13, 14, 15, 16, 19, 20, 29, 30, 31, 34, 37, 40]
 
     t2 = truck.Truck()
-    t2.departureTime = datetime.datetime.strptime('09:05:00', '%H:%M:%S').time()
+    t2.departureTime = datetime.time(9, 5)
     t2.packageList = [3, 5, 6, 7, 10, 11, 17, 18, 25, 28, 32, 33, 35, 36, 38, 39]
 
     t3 = truck.Truck()
@@ -82,42 +82,57 @@ selection = input("1) RUN PACKAGE DELIVERY SIMULATION\n"
 if selection == '1':
     print("NOW DELIVERING PACKAGES...")
 
-    # Truck 1
-    t1.deliver_to_nearest_neighbors(h, g)
+arrivalLog = {}
 
-    # Truck 2
-    t2.deliver_to_nearest_neighbors(h, g)
+# Truck 1
+t1.deliver_to_nearest_neighbors(h, g, arrivalLog)
 
-    # compare departure time + travel time of t1 and t2, then send truck that is finished
-    # first back to hub, then set t3 departure time to time of arrival at hub
-    t1_datetime = datetime.datetime.combine(datetime.date.today(), t1.departureTime)
-    t1CompletionDatetime = t1_datetime + datetime.timedelta(hours=t1.travelTime)
+# Truck 2
+t2.deliver_to_nearest_neighbors(h, g, arrivalLog)
 
-    t2_datetime = datetime.datetime.combine(datetime.date.today(), t2.departureTime)
-    t2CompletionDatetime = t2_datetime + datetime.timedelta(hours=t2.travelTime)
+# compare departure time + travel time of t1 and t2, then send truck that is finished
+# first back to hub, then set t3 departure time to time of arrival at hub
+t1_datetime = datetime.datetime.combine(datetime.date.today(), t1.departureTime)
+t1CompletionDatetime = t1_datetime + datetime.timedelta(hours=t1.travelTime)
 
-    if t1CompletionDatetime.time() < t2CompletionDatetime.time():
-        t3.departureTime = t1CompletionDatetime
-    else:
-        t3.departureTime = t2CompletionDatetime
+t2_datetime = datetime.datetime.combine(datetime.date.today(), t2.departureTime)
+t2CompletionDatetime = t2_datetime + datetime.timedelta(hours=t2.travelTime)
 
-    # Truck 3
-    t3.deliver_to_nearest_neighbors(h, g)
+if t1CompletionDatetime.time() < t2CompletionDatetime.time():
+    t3.departureTime = t1CompletionDatetime.time()
+else:
+    t3.departureTime = t2CompletionDatetime.time()
 
+# Truck 3
+t3.deliver_to_nearest_neighbors(h, g, arrivalLog)
+
+if selection == '1':
     print("TOTAL MILEAGE: " + str(t1.travelMileage + t2.travelMileage + t3.travelMileage)[0: 6] + " miles")
     print("TOTAL DELIVERY TIME: " + str(t1.travelTime + t2.travelTime + t3.travelTime)[0: 5] + " hours")
     print("THANK YOU FOR USING WGUPS - GOODBYE")
 
-# Track packages - TODO
+# Track packages
 elif selection == '2':
-    pass
-    pkg_id = input("PLEASE ENTER PACKAGE ID:\n")
-    time = input("PLEASE ENTER TIME TO CHECK STATUS(HH:MM:SS):\n")
-    # find truck that package is in
-    # run simulation, logging delivery times for each package up until delivery time > query time
-    # if package delivered, print delivered at what time
-    # if not delivered, print en route
-    # if on any truck before its departure, print at hub
+    time = input("PLEASE ENTER TIME TO CHECK PACKAGE STATUS(HH:MM:SS):\n")
+    time = datetime.datetime.strptime(time, '%H:%M:%S').time()
+    for package in arrivalLog:
+        if arrivalLog.get(package).time() <= time:
+            print("#" + str(package) + " has been delivered at " + str(arrivalLog.get(package)))
+        else:
+            if time < t1.departureTime:
+                print("#" + str(package) + " is at hub")
+            elif t1.departureTime <= time < t2.departureTime:
+                if package in t1.packageList:
+                    print("#" + str(package) + " is en route")
+                else:
+                    print("#" + str(package) + " is at hub")
+            elif t2.departureTime <= time < t3.departureTime:
+                if package in t1.packageList or package in t2.packageList:
+                    print("#" + str(package) + " is en route")
+                else:
+                    print("#" + str(package) + " is at hub")
+            else:
+                print("#" + str(package) + " is en route")
 
 else:
     print("INVALID INPUT. TYPE 1 OR 2 TO MAKE SELECTION.")
