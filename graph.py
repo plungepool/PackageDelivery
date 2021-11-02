@@ -1,5 +1,6 @@
 # Graph class
-"""Source: Zybooks"""
+""" Portions of code adapted from:
+Lysecky, Roman, and Frank Vahid. C950: Data Structures and Algorithms II. 2018th ed., Zybooks. """
 
 
 # Class representing a graph of vertices and edges

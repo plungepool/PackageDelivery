@@ -1,5 +1,6 @@
 # Hash Map class
-"""Source: https://www.youtube.com/watch?v=9HFbhPscPU0"""
+""" Portions of code adapted from:
+James, Joe. “Python: Creating a HASHMAP Using Lists.” YouTube, https://www.youtube.com/watch?v=9HFbhPscPU0. """
 
 
 # Class representing a hashmap and its related operations
@@ -34,7 +35,7 @@ class HashMap:
             self.map[key_hash].append(key_value)
             return True
 
-    # Retrieve value using key
+    # Retrieve/lookup value using package ID as the key
     # Time complexity of O(1), worst case O(n)
     def get(self, key):
         key_hash = self._get_hash(key)

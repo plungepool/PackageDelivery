@@ -1,4 +1,5 @@
-# Main
+# Robert Duffy, ID #003377175
+# Time complexity of program: O(n^3)
 import csv
 import datetime
 
@@ -127,23 +128,28 @@ elif selection == '2':
     # Determine status for each package
     # Time complexity of O(n)
     for package in arrivalLog:
+        # Print delivery time if package has already been delivered
         if arrivalLog.get(package).time() <= time:
-            print("#" + str(package) + " has been delivered at " + str(arrivalLog.get(package)))
+            print("Package ID: " + str(h.get(str(package))) + " has been delivered at " + str(arrivalLog.get(package)))
         else:
+            # If query time earlier than earliest departure, mark all packages as being at hub
             if time < t1.departureTime:
-                print("#" + str(package) + " is at hub")
+                print("Package ID: " + str(h.get(str(package))) + " is at hub")
+            # Logic for undelivered package printout when query time is in between truck 1 and 2's departures
             elif t1.departureTime <= time < t2.departureTime:
                 if package in t1.packageList:
-                    print("#" + str(package) + " is en route")
+                    print("Package ID: " + str(h.get(str(package))) + " is en route")
                 else:
-                    print("#" + str(package) + " is at hub")
+                    print("Package ID: " + str(h.get(str(package))) + " is at hub")
+            # Logic for undelivered package printout when query time is in between truck 2 and 3's departures
             elif t2.departureTime <= time < t3.departureTime:
                 if package in t1.packageList or package in t2.packageList:
-                    print("#" + str(package) + " is en route")
+                    print("Package ID: " + str(h.get(str(package))) + " is en route")
                 else:
-                    print("#" + str(package) + " is at hub")
+                    print("Package ID: " + str(h.get(str(package))) + " is at hub")
+            # Logic for undelivered package printout when query time is after truck 3's departure
             else:
-                print("#" + str(package) + " is en route")
+                print("Package ID: " + str(h.get(str(package))) + " is en route")
 
 else:
     print("INVALID INPUT. TYPE 1 OR 2 TO MAKE SELECTION.")
